@@ -1,7 +1,7 @@
 import numpy
 import pylab
 
-from matplotlib.widgets import Slider
+from matplotlib.widgets import Slider, TextBox, Button
 
 
 def lorenz(x, y, z, a=10., b=28., c=2.667):
@@ -16,6 +16,9 @@ if __name__ == '__main__':
         global slider_a
         global slider_b
         global slider_c
+        global start_x
+        global start_y
+        global start_z
         global graph_axes
 
         a = slider_a.val
@@ -29,7 +32,7 @@ if __name__ == '__main__':
         ys = numpy.empty(num_steps + 1)
         zs = numpy.empty(num_steps + 1)
 
-        xs[0], ys[0], zs[0] = (0.1, 0.1, 0.1)
+        xs[0], ys[0], zs[0] = (start_x, start_y, start_x)
 
         for i in range(num_steps):
             x_dot, y_dot, z_dot = lorenz(xs[i], ys[i], zs[i], a, b, c)
@@ -44,6 +47,19 @@ if __name__ == '__main__':
 
 
     def on_change(value):
+        update()
+
+
+    def on_click(value):
+        global x
+        global y
+        global z
+        global start_x
+        global start_y
+        global start_z
+        start_x = float(x.text)
+        start_y = float(y.text)
+        start_z = float(z.text)
         update()
 
 
@@ -81,6 +97,23 @@ if __name__ == '__main__':
                       valfmt='%1.2f')
 
     slider_c.on_changed(on_change)
+
+    axes_x = pylab.axes([0.05, 0.02, 0.1, 0.04])
+    x = TextBox(axes_x, "x ", initial="0.1")
+
+    axes_y = pylab.axes([0.20, 0.02, 0.1, 0.04])
+    y = TextBox(axes_y, "y ", initial="0.1")
+
+    axes_z = pylab.axes([0.35, 0.02, 0.1, 0.04])
+    z = TextBox(axes_z, "z ", initial="0.1")
+
+    axes_button = pylab.axes([0.65, 0.02, 0.3, 0.04])
+    button = Button(axes_button, "Set started point")
+
+    start_x = 0.1
+    start_y = 0.1
+    start_z = 0.1
+    button.on_clicked(on_click)
 
     update()
     pylab.show()
